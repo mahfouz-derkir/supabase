@@ -1,4 +1,17 @@
-<p align="center">
+-- الصق هذا الملف كاملاً في Supabase > SQL Editor ثم اضغط Run
+create table if not exists public.site_state (
+  id int primary key,
+  data jsonb not null default '{}'::jsonb,
+  updated_at timestamptz default now()
+);
+insert into public.site_state (id, data) values (1, '{}'::jsonb) on conflict (id) do nothing;
+
+alter table public.site_state enable row level security;
+
+-- الجميع يقرأ
+create policy "public read" on public.site_state for select using (true);
+-- فقط المستخدم المسجّل (الإدارة) يعدّل
+create policy "admin update" on public.site_state for update to authenticated using (true) with check (true);<p align="center">
 <img src="https://user-images.githubusercontent.com/8291514/213727234-cda046d6-28c6-491a-b284-b86c5cede25d.png#gh-light-mode-only">
 <img src="https://user-images.githubusercontent.com/8291514/213727225-56186826-bee8-43b5-9b15-86e839d89393.png#gh-dark-mode-only">
 </p>
